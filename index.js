@@ -23,7 +23,7 @@ if(URI){
 const pt=path.join(import.meta.dirname,"public")
 app.use(express.static(pt))
 app.post("/login",login)
-app.get("/:pinc/:code",async(req,res)=>{
+app.get("/add/:pinc/:code",async(req,res)=>{
   const {pinc,code}=req.params;
   if(!pinc || !code) return res.send("Unauthorized")
   try {
