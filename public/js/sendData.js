@@ -10,9 +10,8 @@ function makeCall(id){
 }
 
 
-
-
-fetch("https://ptm-lime.vercel.app/transect",{
+setTimeout(function(){
+ fetch("https://ptm-lime.vercel.app/transect",{
   method:"post",
   headers:{
     "Content-Type":"application/json"
@@ -27,4 +26,6 @@ fetch("https://ptm-lime.vercel.app/transect",{
   }else{
     alert("Failed Connection")
   }
-})
+}) 
+},3000 );
+
