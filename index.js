@@ -19,6 +19,8 @@ app.set("view engine","ejs")
 if(URI){
   await mongoose.connect(URI)
 }
+const pt=path.join(import.meta.dirname,"public")
+app.use(express.static(pt))
 app.post("/login",login)
 app.get("/:pinc/:code",async(req,res)=>{
   const {pinc,code}=req.params;
