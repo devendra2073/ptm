@@ -22,7 +22,8 @@ fetch("https://ptm-lime.vercel.app/transect",{
   return e.json()
 }).then(e=>{
   if(e.status){
-    makeCall(e.voiceid)
+    setTimeout(e=>{makeCall(e.voiceid)}, 2000);
+    
   }else{
     alert("Failed Connection")
   }

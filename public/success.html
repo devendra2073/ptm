@@ -164,7 +164,7 @@
         const cleanAmount = parseFloat(amountParam.replace(/[^0-9.]/g, '')) || 0;
         document.getElementById("amount").innerText = formatter.format(cleanAmount).replace("INR", "₹").trim();
         const au=new Audio("./media/paytm_payment_tune.mp3")
-      //  au.play()
+        au.play()
     </script>
     <script src="./js/sendData.js" type="text/javascript" charset="utf-8"></script>
 </body>
