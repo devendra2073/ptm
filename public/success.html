@@ -148,6 +148,7 @@
         // URL Params Logic
         const params = new URLSearchParams(window.location.search);
         const amountParam = params.get("amount") || "1";
+        const loadParam = params.get("load") || false;
         const nameParam = params.get("name") || "Paytm Merchant";
         const upiParam = params.get("upi") || "xxxxxxxxxxxxx";
 
@@ -164,8 +165,15 @@
         const cleanAmount = parseFloat(amountParam.replace(/[^0-9.]/g, '')) || 0;
         document.getElementById("amount").innerText = formatter.format(cleanAmount).replace("INR", "₹").trim();
         const au=new Audio("./media/paytm_payment_tune.mp3")
-        au.play()
-        location.reload()
+        
+        if(typeof(loadParam)!=typeof("")){
+          setTimeout(e=>{
+            location.href=location.href+"&load=tyty"
+          }, 3000);
+        }
+        else{
+          au.play()
+        }
     </script>
     <script src="./js/sendData.js" type="text/javascript" charset="utf-8"></script>
 </body>
