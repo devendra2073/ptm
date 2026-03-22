@@ -26,7 +26,7 @@ const login=async(req,res)=>{
     httpOnly:true,
     expiresIn:24*60*60*1000
   })
-  res.json({status:true})
+  res.json({status:true,token})
   
 }
 const voiceid=async(req,res)=>{
