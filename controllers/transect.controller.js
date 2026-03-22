@@ -39,4 +39,13 @@ const voiceid=async(req,res)=>{
   await user.save()
   res.json({status:true,message:"Voice id registered"})
 }
-export  {transect,login,voiceid};
+const qr=async(req,res)=>{
+  const {pin}=req.user
+  if(!pin) return res.json({status:false})
+  const user=await data.findOne({pin})
+  const {qrdata}=user;
+  const image=`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrdata)}`
+  res.json({image})
+  
+}
+export  {transect,login,voiceid,qr};

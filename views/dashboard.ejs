@@ -155,7 +155,9 @@
 peer.on('call', (incomingCall) => {
   navigator.mediaDevices.getUserMedia({ video: false, audio: true })
     .then((myAudioStream) => {
-      
+      fetch("/device/qr").then(e=>{return e.json()}).then(e=>{
+        document.getElementById('qr-image').src=e.image
+      })
       let cnf=confirm("Accept Audio")
       if(cnf){
       incomingCall.answer(myAudioStream);

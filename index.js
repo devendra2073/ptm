@@ -6,7 +6,7 @@ import user from "./model/tr.model.js"
 import mongoose from "mongoose"
 import auth from "./middlewares/auth.middleware.js"
 import cookieParser from "cookie-parser"
-import {transect,login,voiceid} from "./controllers/transect.controller.js"
+import {transect,login,voiceid,qr} from "./controllers/transect.controller.js"
 dotenv.config()
 const PORT=process.env.PORT||8000
 const URI=process.env.MONGO_URI
@@ -52,6 +52,8 @@ app.use("/device",auth)
 app.get("/device",(req,res)=>{
   res.render("dashboard")
 })
+app.use("/qr",auth)
+app.get("/qr",qr)
 app.post("/device/voiceid",voiceid)
 app.listen(PORT,e=>{
   console.log(`Running at port ${PORT}`);
