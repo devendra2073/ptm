@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Downloadable Access Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --primary: #2563eb;
+            --secondary: #64748b;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 320px;
+            text-align: center;
+        }
+
+        .qr-container {
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .qr-container img {
+            display: block;
+            width: 180px;
+            height: 180px;
+        }
+
+        .pin-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .pin-text {
+            font-family: monospace;
+            font-size: 1.4rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        button {
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            border-radius: 8px;
+        }
+
+        .btn-download {
+            background-color: var(--primary);
+            color: white;
+            width: 100%;
+            padding: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .btn-download:hover { background-color: #1d4ed8; }
+
+        .btn-toggle {
+            background: none;
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2 style="margin-top:0">Entry Pass</h2>
+    
+    <div class="qr-container">
+        <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SecurePIN8842" alt="QR Code">
+    </div>
+
+    <div class="pin-box">
+        <div id="pin-display" class="pin-text">****</div>
+        <button class="btn-toggle" onclick="togglePin()">SHOW PIN</button>
+    </div>
+
+    <button class="btn-download" onclick="downloadQR()">Download QR Code</button>
+</div>
+
+<script>
+    // Toggle PIN Visibility
+    let isVisible = false;
+    const myPin = "8842";
+
+    function togglePin() {
+        isVisible = !isVisible;
+        const display = document.getElementById('pin-display');
+        const btn = document.querySelector('.btn-toggle');
+        display.innerText = isVisible ? myPin : "****";
+        btn.innerText = isVisible ? "HIDE PIN" : "SHOW PIN";
+    }
+
+    // Download Logic
+    async function downloadQR() {
+        const img = document.getElementById('qr-image');
+        const response = await fetch(img.src);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'my-access-qr.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    }
+</script>
+
+</body>
+</html>

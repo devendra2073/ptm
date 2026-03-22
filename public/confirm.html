@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+    eruda.init();
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPI Payment UI</title>
+    <style type="text/css" media="all">
+      * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    position: relative;
+}
+
+/* Header */
+.header {
+    padding-bottom: 0px;
+}
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Profile Section */
+.profile {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.avatar {
+    width: 60px;
+    height: 60px;
+    background-color: #f5e1c8;
+    color: #8d6e4a;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+.name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+.verified-badge {
+    color: #00acee;
+    font-size: 0.9rem;
+}
+.upi-id {
+    color: #5f6368;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+.upi-icon { height: 12px; }
+
+/* Amount Section */
+.amount-container {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #dadce0;
+}
+.currency-symbol {
+    font-size: 2rem;
+    vertical-align: top;
+    margin-right: 5px;
+}
+.amount {
+    font-size: 4rem;
+    font-weight: 700;
+}
+
+/* Add Message */
+.add-message {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.add-message span {
+    border: 1px dashed #dadce0;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: #3c4043;
+}
+
+/* Button */
+.action-container {
+    margin-bottom: 20px;
+}
+.proceed-btn {
+    width: 100%;
+    background-color: #00b4f0;
+    color: white;
+    border: none;
+    padding: 18px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Numpad Grid */
+.numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    margin: 0 -20px -20px -20px; /* Flush to bottom */
+}
+.key {
+    background: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.key.delete {
+    background: #e8eaed;
+}
+.blk{
+  color:#000;
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <button class="back-btn" onclick="history.back()">←</button>
+        </header>
+
+        <section class="profile">
+            <div class="avatar" id="avatar"></div>
+            <h1 class="name" id="name"> <span class="verified-badge">✔</span></h1>
+            <p class="upi-id"id="upi"> <img src="./media/logo.webp" alt="UPI" class="upi-icon"></p>
+        </section>
+
+        <section class="amount-container">
+            <span class="currency-symbol" id="sm">₹</span>
+            <span class="amount"id="am">0</span>
+        </section>
+
+        <div class="add-message">
+            <span>+ Add Message</span>
+        </div>
+
+        <div class="action-container" onclick="pay()">
+            <button class="proceed-btn" onclick="pay()">Proceed Securely</button>
+        </div>
+
+        <div class="numpad" id="np">
+            <div class="key">1</div><div class="key">2</div><div class="key">3</div>
+            <div class="key">4</div><div class="key">5</div><div class="key">6</div>
+            <div class="key">7</div><div class="key">8</div><div class="key">9</div>
+            <div class="key">+</div><div class="key">0</div><div class="key delete">⌫</div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" charset="utf-8">
+  let amount=[]
+  const params=new URLSearchParams(window.location.search)
+  
+  const name=params.get("name")
+  const upi=params.get("upi")
+  document.getElementById("name").innerText=name ||"Paytm Merchant"
+   document.getElementById("upi").innerText=upi ||"xxxxxxxxxxxx"
+  let hh=document.getElementById("name").innerText.split(" ")
+  const dp=hh[0][0].toUpperCase()+hh[hh.length-1][0].toUpperCase()
+  document.getElementById("avatar").innerText=dp
+  function pay(){
+    const nmt=parseInt(amount.join(""))
+    const nxt=`success.html?name=${encodeURIComponent(name)}&upi=${encodeURIComponent(upi)}&amount=${nmt}`
+    if(nmt && name && upi){
+      location.href=nxt
+    }
+  }
+  
+  
+  
+  
+  
+  document.getElementById('np').addEventListener("click",e=>{
+    
+    if(e.target.classList.contains("key")){
+      const letter=e.target.innerText
+      if(letter== "⌫"){
+        amount.pop()
+      }else{
+      amount.push(letter)
+        
+      }
+      let conf=amount.join("")
+      
+     if(conf.length==0){
+       document.getElementById("am").innerText="0"
+       document.getElementById("am").classList.remove("blk")
+       document.getElementById("sm").classList.remove("blk")
+     }
+     else{
+       const cv=parseInt(conf)
+
+const formatter = new Intl.NumberFormat('en-IN', {
+  style: 'decimal',
+
+  minimumFractionDigits: 0, // Rounds to 2 decimal places
+  maximumFractionDigits: 2, // Rounds to 2 decimal places
+});
+
+       document.getElementById("am").innerText=formatter.format(cv)
+       document.getElementById("am").classList.add("blk")
+       document.getElementById("sm").classList.add("blk")
+     }
+    }
+  } )
+</script>
+</html>
