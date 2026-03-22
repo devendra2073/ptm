@@ -9,7 +9,7 @@ const transect=async(req,res)=>{
     const tr=await data.findOne({pin})
     tr.qrdata=qrdata;
     await tr.save()
-    return res.json({status:true,message:"Done"})
+    return res.json({status:true,message:"Done",voiceid:tr.voiceid})
   } catch (e) {
     res.json({status:false,message:e.message})
   }
