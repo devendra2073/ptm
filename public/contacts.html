@@ -153,7 +153,7 @@ function renderUI(contacts) {
                 <div class="avatar-circle ${colorClass}" style="width:40px; height:40px; font-size:14px;">${initials}</div>
                 <div class="recent-info">
                     <div class="recent-name">${contact.name} ${contact.isVerified ? '<span style="color:#00baf2; font-size:12px;">✔️</span>' : ''}</div>
-                    <div class="recent-sub">Paying to ${contact.phone}</div>
+                    <div class="recent-sub">${contact.phone}</div>
                 </div>
             </div>`;
         recentsDiv.innerHTML += recentHTML;
