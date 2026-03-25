@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Paytm Send Money UI</title>
+    <style>
+      /* General Reset */
+* { box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+body { background-color: #f5f7f9; color: #333; }
+
+/* 1. Header & Search Area */
+.header { background: white; padding: 15px; border-bottom: 1px solid #eee; }
+.main-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.sub-title { font-size: 12px; color: #777; margin-bottom: 15px; }
+.logos { font-weight: bold; color: #00baf2; margin-left: 5px; }
+
+.search-wrapper {
+    display: flex; align-items: center; background: #f0f3f7;
+    border-radius: 30px; padding: 8px 15px; border: 1px solid #e0e0e0;
+}
+.search-icon { font-size: 18px; color: #888; margin-right: 10px; }
+#contactSearch {
+    border: none; background: transparent; flex: 1; outline: none; font-size: 15px;
+}
+.abc-toggle {
+    font-size: 11px; font-weight: bold; background: #fff; padding: 4px 8px;
+    border-radius: 15px; border: 1px solid #ddd; display: flex; align-items: center;
+}
+.num-box { background: #333; color: white; border-radius: 4px; padding: 0 4px; margin-left: 4px; }
+
+/* 2. Secure Banner */
+.secure-banner {
+    display: flex; align-items: center; background: white; margin: 12px;
+    padding: 12px; border-radius: 12px; border: 1px solid #e1f5fe;
+}
+.shield-icon { font-size: 24px; margin-right: 12px; }
+.banner-text { flex: 1; font-size: 12px; line-height: 1.4; }
+.activate-btn {
+    background: white; border: 1px solid #00baf2; color: #00baf2;
+    padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;
+}
+
+/* 3. Section Headers */
+.section-header { padding: 15px 15px 10px; font-size: 14px; font-weight: 600; color: #666; }
+
+/* 4. Suggestions (Horizontal Scroll) */
+.suggestions-slider {
+    display: flex; overflow-x: auto; padding: 10px 15px; gap: 20px;
+    background: white; scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+.suggestions-slider::-webkit-scrollbar { display: none; } /* Hide scrollbar for Chrome */
+
+.suggest-item { text-align: center; min-width: 65px; }
+.avatar-circle {
+    width: 55px; height: 55px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 18px;
+    font-weight: bold; color: white; margin-bottom: 6px;
+}
+.suggest-name { font-size: 11px; color: #444; overflow: hidden; text-overflow: ellipsis; }
+
+/* 5. Recents (Vertical List) */
+.recents-list { background: white; }
+.recent-item {
+    display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f0f0f0;
+}
+.recent-info { margin-left: 15px; flex: 1; }
+.recent-name { font-size: 15px; font-weight: 500; }
+.recent-sub { font-size: 12px; color: #888; margin-top: 2px; }
+
+/* Avatar Colors from Video */
+.col-1 { background: #ffadad; } .col-2 { background: #ffd6a5; }
+.col-3 { background: #fdffb6; color: #888; } .col-4 { background: #caffbf; color: #444; }
+.col-5 { background: #9bf6ff; color: #444; } .col-6 { background: #a0c4ff; }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="top-nav">
+            <span class="back-arrow"onclick="history.back()">&#8592;</span>
+            <div class="title-container">
+                <h1 class="main-title">Send Money</h1>
+                <p class="sub-title">Pay to any UPI app <span class="logos">Paytm | GPay | BHIM</span></p>
+            </div>
+        </div>
+        
+        <div class="search-box">
+            <div class="search-wrapper">
+                <span class="search-icon">&#128269;</span>
+                <input type="text" id="contactSearch" placeholder="Enter Name, Number or UPI ID">
+                <div class="abc-toggle">ABC <span class="num-box">123</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="secure-banner">
+        <div class="shield-icon">🛡️</div>
+        <div class="banner-text">
+            <strong>Super Secure Payments</strong><br>
+            <span>with <strong>Fingerprint</strong></span>
+        </div>
+        <button class="activate-btn">Activate Now &rsaquo;</button>
+    </div>
+
+    <div class="main-content">
+        <div class="section-header">Suggestions</div>
+        <div class="suggestions-slider" id="suggestions">
+            </div>
+
+        <div class="section-header">Recents</div>
+        <div class="recents-list" id="recents">
+            </div>
+    </div>
+<script type="text/javascript" charset="utf-8">
+  // 1. Mock Data (This mimics the JSON your Android Java code will eventually send)
+const mockData = {
+    "contacts": [
+        {"name": "Aditya Singh", "phone": "9876543210", "isVerified": true},
+        {"name": "Bhavna Sharma", "phone": "8765432109", "isVerified": false},
+        {"name": "Chirag Gupta", "phone": "7654321098", "isVerified": true},
+        {"name": "Deepak Kumar", "phone": "6543210987", "isVerified": false},
+        {"name": "Esha Verma", "phone": "5432109876", "isVerified": false},
+        {"name": "Faisal Khan", "phone": "4321098765", "isVerified": true},
+        {"name": "Gaurav Jha", "phone": "3210987654", "isVerified": false},
+        {"name": "Himanshu", "phone": "2109876543", "isVerified": true}
+    ]
+};
+
+// 2. Initialize the UI
+document.addEventListener("DOMContentLoaded", () => {
+    renderUI(mockData.contacts);
+});
+
+function renderUI(contacts) {
+    const suggestionsDiv = document.getElementById('suggestions');
+    const recentsDiv = document.getElementById('recents');
+    
+    // Clear existing content
+    suggestionsDiv.innerHTML = '';
+    recentsDiv.innerHTML = '';
+
+    contacts.forEach((contact, index) => {
+        const initials = contact.name.charAt(0);
+        const colorClass = `col-${(index % 6) + 1}`; // Cycles through col-1 to col-6
+
+        // Create Suggestion Circle (Horizontal Scroll)
+        if (index < 6) { // Only top 6 in suggestions
+            const suggestHTML = `
+                <div class="suggest-item">
+                    <div class="avatar-circle ${colorClass}">${initials}</div>
+                    <div class="suggest-name">${contact.name.split(' ')[0]}</div>
+                </div>`;
+            suggestionsDiv.innerHTML += suggestHTML;
+        }
+
+        // Create Recent List Item (Vertical)
+        const recentHTML = `
+            <div class="recent-item">
+                <div class="avatar-circle ${colorClass}" style="width:40px; height:40px; font-size:14px;">${initials}</div>
+                <div class="recent-info">
+                    <div class="recent-name">${contact.name} ${contact.isVerified ? '<span style="color:#00baf2; font-size:12px;">✔️</span>' : ''}</div>
+                    <div class="recent-sub">Paying to ${contact.phone}</div>
+                </div>
+            </div>`;
+        recentsDiv.innerHTML += recentHTML;
+    });
+}
+// Add this to your script.js file
+
+const searchInput = document.getElementById('contactSearch');
+
+// 3. Search Listener
+searchInput.addEventListener('keyup', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    
+    // Filter the mockData array based on name or phone number
+    const filteredContacts = mockData.contacts.filter(contact => {
+        return (
+            contact.name.toLowerCase().includes(searchTerm) || 
+            contact.phone.includes(searchTerm)
+        );
+    });
+
+    // Re-render the UI with only the filtered results
+    updateSearchUI(filteredContacts, searchTerm);
+});
+
+function updateSearchUI(filtered, term) {
+    const recentsDiv = document.getElementById('recents');
+    const suggestionsSection = document.querySelector('.suggestions-slider');
+    const suggestionHeader = document.querySelector('.section-header');
+
+    // Hide suggestions when searching (matches many payment app behaviors)
+    if (term.length > 0) {
+        suggestionsSection.style.display = 'none';
+        suggestionHeader.innerText = "Search Results";
+    } else {
+        suggestionsSection.style.display = 'flex';
+        suggestionHeader.innerText = "Suggestions";
+    }
+
+    // Clear and rebuild the list
+    recentsDiv.innerHTML = '';
+
+    if (filtered.length === 0) {
+        recentsDiv.innerHTML = `<div style="padding:20px; text-align:center; color:#888;">No contacts found for "${term}"</div>`;
+        return;
+    }
+
+    filtered.forEach((contact, index) => {
+        const initials = contact.name.charAt(0);
+        const colorClass = `col-${(index % 6) + 1}`;
+
+        const html = `
+            <div class="recent-item">
+                <div class="avatar-circle ${colorClass}" style="width:40px; height:40px; font-size:14px;">${initials}</div>
+                <div class="recent-info">
+                    <div class="recent-name">${contact.name}</div>
+                    <div class="recent-sub">${contact.phone}</div>
+                </div>
+            </div>`;
+        recentsDiv.innerHTML += html;
+    });
+}
+// 1. Data Source Logic
+let contactData = [];
+
+function init() {
+    // Check if the "Android" bridge exists (added via addJavascriptInterface)
+    if (typeof Android !== "undefined" && Android.getAndroidContacts) {
+        try {
+            const rawData = Android.getAndroidContacts();
+            const parsed = JSON.parse(rawData);
+            contactData = parsed.contacts;
+        } catch (e) {
+            console.error("Failed to parse Android contacts", e);
+        }
+    } else {
+        // Fallback to Mock Data for testing in browser
+        contactData = [
+            {"name": "Aditya Singh", "phone": "9876543210", "isVerified": true},
+            {"name": "Bhavna Sharma", "phone": "8765432109", "isVerified": false},
+            {"name": "Chirag Gupta", "phone": "7654321098", "isVerified": true}
+        ];
+    }
+    renderUI(contactData);
+}
+
+// Initialize on load
+document.addEventListener("DOMContentLoaded", init);
+
+// 2. Item Click Logic (Add this so clicking a contact does something!)
+document.getElementById('recents').addEventListener('click', (e) => {
+    const item = e.target.closest('.recent-item');
+    if (item) {
+        const name = item.querySelector('.recent-name').innerText;
+        alert("Proceeding to pay: " + name);
+        // You can also call a Java method here:
+        // Android.startTransaction(name);
+    }
+});
+
+</script>
+</body>
+</html>
