@@ -118,18 +118,7 @@ body { background-color: #f5f7f9; color: #333; }
     </div>
 <script type="text/javascript" charset="utf-8">
   // 1. Mock Data (This mimics the JSON your Android Java code will eventually send)
-let mockData = {
-    "contacts": [
-        {"name": "Aditya Singh", "phone": "9876543210", "isVerified": true},
-        {"name": "Bhavna Sharma", "phone": "8765432109", "isVerified": false},
-        {"name": "Chirag Gupta", "phone": "7654321098", "isVerified": true},
-        {"name": "Deepak Kumar", "phone": "6543210987", "isVerified": false},
-        {"name": "Esha Verma", "phone": "5432109876", "isVerified": false},
-        {"name": "Faisal Khan", "phone": "4321098765", "isVerified": true},
-        {"name": "Gaurav Jha", "phone": "3210987654", "isVerified": false},
-        {"name": "Himanshu", "phone": "2109876543", "isVerified": true}
-    ]
-};
+let mockData =Android.getAndroidContacts()
 
 // 2. Initialize the UI
 document.addEventListener("DOMContentLoaded", () => {
