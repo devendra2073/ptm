@@ -118,7 +118,7 @@ body { background-color: #f5f7f9; color: #333; }
     </div>
 <script type="text/javascript" charset="utf-8">
   // 1. Mock Data (This mimics the JSON your Android Java code will eventually send)
-const mockData = {
+let mockData = {
     "contacts": [
         {"name": "Aditya Singh", "phone": "9876543210", "isVerified": true},
         {"name": "Bhavna Sharma", "phone": "8765432109", "isVerified": false},
@@ -237,6 +237,7 @@ function init() {
             const rawData = Android.getAndroidContacts();
             const parsed = JSON.parse(rawData);
             contactData = parsed.contacts;
+            mockData = parsed.contacts;
         } catch (e) {
             console.error("Failed to parse Android contacts", e);
         }
