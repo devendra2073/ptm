@@ -248,7 +248,8 @@ document.getElementById('recents').addEventListener('click', (e) => {
     const item = e.target.closest('.recent-item');
     if (item) {
         const name = item.querySelector('.recent-name').innerText;
-        alert("Proceeding to pay: " + name);
+        const phone = item.querySelector('.recent-sub').innerText;
+        location.href=`confirm.html?name=${encodeURIComponent(name)}&upi=${phone}`
         // You can also call a Java method here:
         // Android.startTransaction(name);
     }
