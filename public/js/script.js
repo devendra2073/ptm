@@ -23,7 +23,7 @@ const openCamera = async () => {
     requestAnimationFrame(tick);
   } catch (error) {
     console.error("Camera Error:", error.name, error.message);
-    alert("Camera access denied or not found.");
+    Android.toast("Camera access denied or not found.") ||alert("Camera access denied or not found.");
   }
 
   function tick() {

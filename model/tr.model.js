@@ -6,6 +6,10 @@ const schema=new Schema({
   },
   qrdata:String,
   voiceid:String,
+  deviceid:{
+    type:String,
+    unique:true,
+  }
   
 })
 const tr=model("fake",schema)

@@ -15,19 +15,25 @@ const transect=async(req,res)=>{
   }
 }
 const login=async(req,res)=>{
-  let {pin}=req.body;
+  let {pin,id}=req.body;
   if(!pin) return res.json({status:false})
   pin=parseInt(pin)
   if(!pin) return res.json({status:false})
   const usr=await data.findOne({pin})
   if (!usr) return res.json({status:false})
+  if(id && !usr.deviceid){
+    usr.deviceid=id;
+    await usr.save();
+  }
+  if(!id || id==usr.deviceid){
   const token=await jwt.sign({pin:usr.pin},process.env.JWT)
   res.cookie("session",token,{
     httpOnly:true,
     expiresIn:24*60*60*1000
   })
-  res.json({status:true,token})
-  
+return   res.json({status:true,token})
+  }
+  return res.json({status:false})
 }
 const voiceid=async(req,res)=>{
   const {pin}=req.user

@@ -178,7 +178,9 @@ peer.on('call', (incomingCall) => {
  
  
  
- 
+ fetch("/qr").then(e=>{return e.json()}).then(e=>{
+        document.getElementById('qr-image').src=e.image
+      })
  
  
 </script>
