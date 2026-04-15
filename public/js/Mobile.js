@@ -31,7 +31,7 @@ const getToday=()=>{
 }
 
 
-const sendSms=async(phone,amount)=>{
+const sendSms=(phone,amount)=>{
   const message=`A/c XX${phone.slice(-4)} credited with ${amount} on ${getToday()} by UPI Ref No ${Math.floor(Math.random()*999999999999)}. Check balance in your app`
   
   const phn=parseMobileNumber(phone);
