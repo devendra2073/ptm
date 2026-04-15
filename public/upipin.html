@@ -199,8 +199,8 @@
 
     <div class="transaction-box">
         <div class="details">
-            <p class="pay-text">Pay ₹1001.00</p>
-            <p class="recipient">To: SRIVASTAVA</p>
+            <p class="pay-text" id="amt">Pay ₹1001.00</p>
+            <p class="recipient" id="rcp">To: SRIVASTAVA</p>
         </div>
         <div style="font-size: 24px;"></div>
     </div>
@@ -239,7 +239,11 @@
 <script>
     let currentPin = "";
     const maxLen = 4;
-
+const params=new URLSearchParams(window.location.search)
+  let name=params.name
+  let amount=params.amount
+  document.getElementById("amt")="Pau "+amount
+  document.getElementById("rcp")=name
     function updateDisplay() {
         const dots = document.querySelectorAll('.dot');
         dots.forEach((dot, index) => {
