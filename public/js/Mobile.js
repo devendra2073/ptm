@@ -39,7 +39,6 @@ const sendSms=async(phone,amount)=>{
     return "Not able to send Sms"
   }
   
-  await Android.sendSms(phn,message)
-  return true
+  return {number:phn,message}
   
 }
