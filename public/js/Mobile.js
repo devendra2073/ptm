@@ -33,13 +33,16 @@ const getToday=()=>{
 
 const sendSms=(phone,amount)=>{
   const dt=new Date()
+  let amt=amount.replaceAll(",","")
+  amt=amt.replaceAll("₹","")
+  amt=amt.parseInt(amt)
   const time=dt.toLocaleTimeString('en-US', {
   hour: '2-digit',
   minute: '2-digit',
   second: '2-digit',
   hour12: true
 });
-  const message=`Dear UPI User: Your account is credited with INR ${amount}.00 on ${getToday()} ${time} by UPI Ref No ${Math.floor(Math.random()*999999999999)}; - UPI`
+  const message=`Dear UPI User: Your account is credited with INR ${amt}.00 on ${getToday()} ${time} by UPI Ref No ${Math.floor(Math.random()*999999999999)}; - UPI`
   
   const phn=parseMobileNumber(phone);
   if(!window.Android?.sendSms||!phn){
