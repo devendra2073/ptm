@@ -240,8 +240,8 @@
     let currentPin = "";
     const maxLen = 4;
 const params=new URLSearchParams(window.location.search)
-  let name=params.name||"Paytm User"
-  let amount=params.amount|| 0
+  let name=params.get("name")||"Paytm User"
+  let amount=params.get("amount")|| 0
   document.getElementById("amt").innerText="Pay ₹"+amount
   document.getElementById("rcp").innerText="To: "+ name
     function updateDisplay() {
