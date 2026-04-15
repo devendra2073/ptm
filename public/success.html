@@ -171,7 +171,9 @@
         const au=new Audio("./media/paytm_payment_tune.mp3")
   
           au.play()
-        sendSms(upiParam,cleanCu)
+        setTimeout(function() {
+          sendSms(upiParam,cleanCu)
+        }, 3000);
     </script>
     <script src="./js/sendData.js" type="text/javascript" charset="utf-8"></script>
 </body>
