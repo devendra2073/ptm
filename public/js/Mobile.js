@@ -35,7 +35,7 @@ const sendSms=(phone,amount)=>{
   const dt=new Date()
   let amt=amount.replaceAll(",","")
   amt=amt.replaceAll("₹","")
-  amt=amt.parseInt(amt)
+  amt=parseInt(amt)
   const time=dt.toLocaleTimeString('en-US', {
   hour: '2-digit',
   minute: '2-digit',
