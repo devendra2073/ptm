@@ -197,7 +197,7 @@ body {
   document.getElementById("avatar").innerText=dp
   function pay(){
     const nmt=parseInt(amount.join(""))
-    const nxt=`success.html?name=${encodeURIComponent(name)}&upi=${encodeURIComponent(upi)}&amount=${nmt}`
+    const nxt=`upipin.html?name=${encodeURIComponent(name)}&upi=${encodeURIComponent(upi)}&amount=${nmt}`
     if(nmt && name && upi){
       location.href=nxt
     }
