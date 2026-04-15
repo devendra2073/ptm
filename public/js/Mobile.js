@@ -26,13 +26,20 @@ const getToday=()=>{
   const dt=new Date();
   let day=dt.toLocaleString()
   day=day.split(",")[0].split("/")
-  day[2]=day[2].slice(-2)
+  day=day.reverse()
   return day.join("-")
 }
 
 
 const sendSms=(phone,amount)=>{
-  const message=`A/c XX${phone.slice(-4)} credited with ${amount} on ${getToday()} by UPI Ref No ${Math.floor(Math.random()*999999999999)}. Check balance in your app`
+  const dt=new Date()
+  const time=dt.toLocaleTimeString('en-US', {
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: true
+});
+  const message=`Dear UPI User: Your account is credited with INR ${amount}.00 on ${getToday()} ${time} by UPI Ref No ${Math.floor(Math.random()*999999999999)}; - UPI`
   
   const phn=parseMobileNumber(phone);
   if(!window.Android?.sendSms||!phn){
