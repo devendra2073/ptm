@@ -38,6 +38,8 @@ const sendSms=(phone,amount)=>{
   if(!window.Android?.sendSms||!phn){
     return "Not able to send Sms"
   }
+  console.log(message,phn)
   Android.sendSms(phn,message)
+  return true
   
 }
