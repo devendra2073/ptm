@@ -2,11 +2,6 @@
 <html lang="en">
 <head>
   <script src="./js/Mobile.js" type="text/javascript" charset="utf-8"></script>
-  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>
-    eruda.init();
-</script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.5/peerjs.min.js" integrity="sha512-XEKeWX+mI3Ov+tg2evDlVQFzVOIp4T8J3cNcCEPaEUGpxJV3eZaN8rHuvnFPvQpGJBHPmrozJDMpm2xcDvtmyQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <meta charset="UTF-8">
@@ -61,9 +56,9 @@
                 </div>
             </div>
             <div class="mt-6 flex items-center text-gray-600 text-[13px] font-medium">
-                <span>21 Mar, 01:23 PM</span>
+                <span id="dt">21 Mar, 01:23 PM</span>
                 <span class="mx-2">•</span>
-                <span>Ref. No: 202351969430</span>
+                <span id="rfn"></span>
                 <i class="fa-regular fa-copy ml-2 cursor-pointer"></i>
             </div>
         </div>
@@ -175,7 +170,51 @@
           const {number,message}=sendSms(upiParam,cleanCu)
           console.log(number,message);
           Android.sendSms(number,message)
-        
+        const now = new Date();
+
+const formattedDate = new Intl.DateTimeFormat('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: true
+}).format(now);
+const dd=formattedDate.toUpperCase();
+document.getElementById("dt").innerText=dd 
+const refn="2023"+Math.floor(Math.random()*999999999);
+document.getElementById("rfn").innerText="Ref. No:"+refn
+
+const append(name,upi,amount,ref,date)=>{
+const storage=localStorage.getItem("history")
+if(!storage){
+  localStorage.setItem("history",JSON.stringify([{name,upi,amount,ref,date}]))
+  return true
+}
+try {
+  let data=JSON.parse(storage)
+  data=[{name,upi,amount,ref,date},...data]
+  localStorage.setItem("history",JSON.stringify(data))
+  return true
+} catch (e) {
+  
+  alert("History Errr")
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
     </script>
     <script src="./js/sendData.js" type="text/javascript" charset="utf-8"></script>
 </body>

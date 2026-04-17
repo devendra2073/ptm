@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History UI</title>
+    <style type="text/css" media="all">
+      :root {
+    --bg-color: #f5f9ff;
+    --text-main: #1d252d;
+    --text-sub: #6c757d;
+    --bob-orange: linear-gradient(135deg, #e65100, #ff8f00);
+    --hdfc-blue: linear-gradient(135deg, #003366, #004a99);
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+}
+.sml{
+  height: 20px;
+  aspect-ratio: 1/1;
+}
+.app-container {
+    max-width: 450px;
+    margin: 0 auto;
+    background: #fff;
+    min-height: 100vh;
+    padding-bottom: 20px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    gap: 15px;
+}
+.header h1 { font-size: 1.2rem; flex-grow: 1; margin: 0; }
+
+/* Bank Cards */
+.accounts-section { padding: 15px; }
+.accounts-section h2 { font-size: 1rem; color: var(--text-sub); margin-bottom: 15px; }
+.cards-container { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; }
+
+.bank-card {
+    min-width: 180px;
+    border-radius: 16px;
+    padding: 15px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 110px;
+}
+.bob { background: var(--bob-orange); }
+.hdfc { background: var(--hdfc-blue); }
+
+.card-header { display: flex; justify-content: space-between; }
+.bank-name { display: block; font-weight: bold; font-size: 1.1rem; }
+.acc-no { font-size: 0.8rem; opacity: 0.9; }
+
+.check-balance {
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    padding: 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* History List */
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 15px 10px;
+}
+.month-summary {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background: #fdfdfd;
+    border-bottom: 1px solid #eee;
+}
+
+.transaction-item {
+    display: flex;
+    padding: 15px;
+    border-bottom: 1px solid #f1f1f1;
+    align-items: flex-start;
+}
+
+.avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #fff8e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-weight: bold;
+    color: #ffb300;
+}
+.mdl{
+  height: 40px;
+  aspect-ratio: 1/1;
+}
+.details { flex-grow: 1; }
+.name { font-weight: 600; display: block; }
+.sub-text { font-size: 0.8rem; color: var(--text-sub); margin-top: 2px; }
+
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    background: #e8f5e9;
+    color: #2e7d32;
+    margin-top: 8px;
+}
+
+.amount-col { text-align: right;}
+.amount { font-weight: bold; }
+.from-bank { font-size: 0.7rem; color: var(--text-sub); margin-top: 5px; }
+
+.footer-brand {
+    text-align: center;
+    font-size: 0.7rem;
+    color: #999;
+    padding: 20px;
+}
+
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="back-btn">←</div>
+            <h1>Balance & History</h1>
+            <div class="more-btn">⋮</div>
+        </header>
+
+        <section class="accounts-section">
+            <h2>Your Accounts</h2>
+            <div class="cards-container">
+                <div class="bank-card bob">
+                    <div class="card-header">
+                        <div class="bank-info">
+                            <span class="bank-name">BOB Bank</span>
+                            <span class="acc-no">A/c No: 0453</span>
+                        </div>
+                        <div class="bank-logo"><img src="./media/bob.png"class="mdl"></div>
+                    </div>
+                    <button class="check-balance">Check Balance</button>
+                </div>
+                
+            </div>
+        </section>
+
+        <section class="history-section">
+            <div class="history-header">
+                <h2>Payment History</h2>
+                <div class="history-icons">
+                    <span>🔍</span>
+                    <span>≗</span>
+                    <span>📥</span>
+                </div>
+            </div>
+
+            <div class="month-summary">
+                <span class="month-name"></span>
+                <div class="spent-box">
+                    <span class="spent-label">Total Spent</span>
+                    <span class="spent-amount">₹6,018</span>
+                </div>
+            </div>
+
+            <div id="transaction-list">
+                </div>
+        </section>
+
+        <footer class="footer-brand">
+            Paytm <span>| Powered by UPI</span>
+        </footer>
+    </div>
+
+    <script>
+      // Sample structure based on your request: {name, upi, amount, ref, date}
+const historyData = JSON.parse(localStorage.getItem('history')) || [];
+
+const listContainer = document.getElementById('transaction-list');
+
+function renderHistory() {
+    if (historyData.length === 0) {
+        listContainer.innerHTML = '<p style="text-align:center; padding:20px;">No transactions found.</p>';
+        return;
+    }
+
+    listContainer.innerHTML = historyData.map(item => {
+        // Generate a random color or initial for the avatar if icon not provided
+        const initial = item.name.charAt(0);
+        
+        return `
+            <div class="transaction-item">
+                <div class="avatar">${initial}</div>
+                <div class="details">
+                    <span class="name">${item.name}</span>
+                    <span class="sub-text">Paid on ${item.date}</span>
+                    <div class="badge">🔄 ${item.re || 'Miscellaneous'}</div>
+                </div>
+                <div class="amount-col">
+                    <span class="amount">- ₹${item.amount}</span>
+                    <div class="from-bank">From <img src="./media/bob.png" class="sml"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Initialize
+renderHistory();
+
+
+      
+      
+      
+    </script>
+</body>
+</html>
