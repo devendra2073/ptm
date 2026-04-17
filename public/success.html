@@ -151,66 +151,75 @@
         canvas.addEventListener('mousemove', scratch);
         canvas.addEventListener('touchmove', scratch);
 
-        // URL Params Logic
-        const params = new URLSearchParams(window.location.search);
-        const amountParam = params.get("amount") || "1";
-      
-        const nameParam = params.get("name") || "Paytm Merchant";
-        const upiParam = params.get("upi") || "xxxxxxxxxxxxx";
+        // ... [Keep Scratch Logic as is] ...
 
-        document.getElementById("name").innerText = nameParam;
-        document.getElementById("upi").innerText = `UPI ID: ${upiParam}`;
+// URL Params Logic
+const params = new URLSearchParams(window.location.search);
+const nameParam = params.get("name") || "Paytm Merchant";
+const upiParam = params.get("upi") || "merchant@paytm";
+const amountParam = params.get("amount") || "1";
 
-        const formatter = new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            maximumFractionDigits: 0
-        });
-        
-        // Clean amount string and format
-        const cleanAmount = parseFloat(amountParam.replace(/[^0-9.]/g, '')) || 0;
-        const cleanCu=formatter.format(cleanAmount).replace("INR", "₹").trim();
-        document.getElementById("amount").innerText = cleanCu
-        const au=new Audio("./media/paytm_payment_tune.mp3")
-  
-          au.play()
-        
-          const {number,message}=sendSms(upiParam,cleanCu)
-          console.log(number,message);
-          Android.sendSms(number,message)
-        const now = new Date();
+// Update UI
+document.getElementById("name").innerText = nameParam;
+document.getElementById("upi").innerText = `UPI ID: ${upiParam}`;
 
+// Formatting Amount
+const cleanAmount = parseFloat(amountParam.replace(/[^0-9.]/g, '')) || 0;
+const formattedAmount = `₹${cleanAmount.toLocaleString('en-IN')}`;
+document.getElementById("amount").innerText = formattedAmount;
+
+// Date Logic
+const now = new Date();
 const formattedDate = new Intl.DateTimeFormat('en-GB', {
-  day: '2-digit',
-  month: 'short',
-  hour: '2-digit',
-  minute: '2-digit',
-  hour12: true
-}).format(now);
-const dd=formattedDate.toUpperCase();
-document.getElementById("dt").innerText=dd 
-const refn="2023"+Math.floor(Math.random()*999999999);
-document.getElementById("rfn").innerText="Ref. No:"+refn
+    day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true
+}).format(now).toUpperCase();
+document.getElementById("dt").innerText = formattedDate;
 
-const append(name,upi,amount,ref,date)=>{
-const storage=localStorage.getItem("history")
-if(!storage){
-  localStorage.setItem("history",JSON.stringify([{name,upi,amount,ref,date}]))
-  return true
-}
+// Reference Number
+const refn = "2023" + Math.floor(Math.random() * 999999999);
+document.getElementById("rfn").innerText = "Ref. No: " + refn;
+
+// Audio with interaction safety
+const au = new Audio("./media/paytm_payment_tune.mp3");
+document.addEventListener('click', () => {
+    au.play().catch(e => console.log("Audio play blocked until interaction"));
+}, { once: true });
+
+// SMS Bridge (Assuming Android Interface is present)
 try {
-  let data=JSON.parse(storage)
-  data=[{name,upi,amount,ref,date},...data]
-  localStorage.setItem("history",JSON.stringify(data))
-  return true
+    const { number, message } = sendSms(upiParam, formattedAmount);
+    Android.sendSms(number, message);
 } catch (e) {
-  
-  alert("History Errr")
+    console.log("SMS Interface not found");
 }
 
+/**
+ * Append to LocalStorage History
+ */
+const appendToHistory = (name, upi, amount, ref, date) => {
+    try {
+        const storage = localStorage.getItem("history");
+        let data = storage ? JSON.parse(storage) : [];
+        
+        // Add new transaction to the top of the array
+        const newEntry = { name, upi, amount, ref, date };
+        data = [newEntry, ...data];
+        
+        // Limit history to last 50 items to prevent storage overflow
+        if (data.length > 50) data.pop();
+        
+        localStorage.setItem("history", JSON.stringify(data));
+        return true;
+    } catch (e) {
+        console.error("History Error:", e);
+        return false;
+    }
+};
 
+// Automatically save this transaction to history
+// Using "Miscellaneous" as default ref since it matches your screenshots
+appendToHistory(nameParam, upiParam, cleanAmount.toString(), "Miscellaneous", formattedDate);
 
-}
 
 
 
