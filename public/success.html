@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>eruda.init();</script>
-
-  
   <script src="./js/Mobile.js" type="text/javascript" charset="utf-8"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.5/peerjs.min.js" integrity="sha512-XEKeWX+mI3Ov+tg2evDlVQFzVOIp4T8J3cNcCEPaEUGpxJV3eZaN8rHuvnFPvQpGJBHPmrozJDMpm2xcDvtmyQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -178,9 +174,7 @@ document.getElementById("rfn").innerText = "Ref. No: " + refn;
 
 // Audio with interaction safety
 const au = new Audio("./media/paytm_payment_tune.mp3");
-document.addEventListener('click', () => {
-    au.play().catch(e => console.log("Audio play blocked until interaction"));
-}, { once: true });
+    au.play()
 
 // SMS Bridge (Assuming Android Interface is present)
 try {
