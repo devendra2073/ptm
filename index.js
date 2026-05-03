@@ -1,6 +1,7 @@
 import express from "express"
 import dotenv from "dotenv"
 import path from "path"
+import dns from "dns"
 import cors from "cors"
 import user from "./model/tr.model.js"
 import mongoose from "mongoose"
@@ -10,7 +11,7 @@ import {transect,login,voiceid,qr} from "./controllers/transect.controller.js"
 dotenv.config()
 const PORT=process.env.PORT||8000
 const URI=process.env.MONGO_URI
-
+dns.setServers(["8.8.8.8"])
 const app=express()
 app.use(cors())
 app.use(express.json())

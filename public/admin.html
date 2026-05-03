@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Admin Pro</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        @keyframes slide-up {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+.animate-slide-up { animation: slide-up 0.3s ease-out; }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .active-nav { border-top: 3px solid #3b82f6; color: #3b82f6; }
+        /* Mobile Optimization */
+* {
+    user-select: none; /* Prevents accidental text selection on long-press */
+    -webkit-tap-highlight-color: transparent;
+}
+
+input, select {
+    user-select: text; /* Allow text input selection */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen pb-20">
+
+    <!-- Top Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-40 px-4 py-3 flex justify-between items-center">
+        <h1 id="page-title" class="text-xl font-bold text-gray-800">Dashboard</h1>
+        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs">AD</div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="app-content" class="p-4">
+        <!-- Content will be injected here by JS -->
+    </main>
+
+    <!-- Bottom Navigation (Mobile Primary) -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 z-50">
+        <button onclick="router.navigate('dashboard')" class="nav-link flex flex-col items-center justify-center w-full h-full text-gray-500">
+            <i class="fas fa-chart-line text-lg"></i>
+            <span class="text-[10px] mt-1">Home</span>
+        </button>
+        <button onclick="router.navigate('users')" class="nav-link flex flex-col items-center justify-center w-full h-full text-gray-500">
+            <i class="fas fa-users text-lg"></i>
+            <span class="text-[10px] mt-1">Users</span>
+        </button>
+        <button onclick="router.navigate('transactions')" class="nav-link flex flex-col items-center justify-center w-full h-full text-gray-500">
+            <i class="fas fa-exchange-alt text-lg"></i>
+            <span class="text-[10px] mt-1">Activity</span>
+        </button>
+        <button onclick="router.navigate('create')" class="nav-link flex flex-col items-center justify-center w-full h-full text-gray-500">
+            <i class="fas fa-plus-circle text-lg text-blue-600"></i>
+            <span class="text-[10px] mt-1 text-blue-600 font-bold">New</span>
+        </button>
+    </nav>
+
+    <script>
+        // --- GLOBAL STATE (Dummy Data) ---
+        const state = {
+            users: [
+                { id: 1, name: "Alex Johnson", pin: "1234", status: "Active", photo: "https://i.pravatar.cc/150?u=1" },
+                { id: 2, name: "Sarah Smith", pin: "5566", status: "Inactive", photo: "https://i.pravatar.cc/150?u=2" },
+                { id: 3, name: "Mike Ross", pin: "9090", status: "Active", photo: "https://i.pravatar.cc/150?u=3" }
+            ],
+            transactions: [
+                { id: "TXN1029", username: "Alex Johnson", amount: 250.00, date: "2026-05-01" },
+                { id: "TXN1030", username: "Mike Ross", amount: 15.75, date: "2026-05-02" },
+                { id: "TXN1031", username: "Alex Johnson", amount: 1200.00, date: "2026-05-03" }
+            ]
+        };
+
+        // --- ROUTER ENGINE ---
+        const router = {
+            navigate: function(page) {
+                const content = document.getElementById('app-content');
+                const title = document.getElementById('page-title');
+                
+                // Clear active states
+                document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active-nav'));
+                
+                switch(page) {
+                    case 'dashboard':
+                        title.innerText = "Admin Overview";
+                        renderDashboard();
+                        break;
+                    case 'users':
+                        title.innerText = "Manage Users";
+                        renderUserList();
+                        break;
+                    case 'transactions':
+                        title.innerText = "Recent Transactions";
+                        renderTransactions();
+                        break;
+                    case 'create':
+                        title.innerText = "Create User";
+                        renderCreateUser();
+                        break;
+                }
+            }
+        };
+// --- PART 2: DASHBOARD RENDERING ---
+function renderDashboard() {
+    const content = document.getElementById('app-content');
+    
+    // Calculate simple stats from our state
+    const totalUsers = state.users.length;
+    const activeUsers = state.users.filter(u => u.status === 'Active').length;
+    const totalVolume = state.transactions.reduce((sum, t) => sum + t.amount, 0).toFixed(2);
+
+    content.innerHTML = `
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <!-- Stat Card 1 -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <p class="text-gray-500 text-xs font-medium uppercase tracking-wider">Total Users</p>
+                <h3 class="text-2xl font-bold text-gray-800">${totalUsers}</h3>
+            </div>
+
+            <!-- Stat Card 2 -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="w-10 h-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <p class="text-gray-500 text-xs font-medium uppercase tracking-wider">Active</p>
+                <h3 class="text-2xl font-bold text-gray-800">${activeUsers}</h3>
+            </div>
+
+            <!-- Stat Card 3 (Full Width) -->
+            <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-5 rounded-2xl shadow-lg col-span-2 text-white">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-blue-100 text-sm font-medium">Total Transaction Volume</p>
+                        <h3 class="text-3xl font-extrabold mt-1">₹${totalVolume}</h3>
+                    </div>
+                    <i class="fas fa-wallet text-3xl text-blue-300 opacity-50"></i>
+                </div>
+                <div class="mt-4 flex items-center text-xs text-blue-100">
+                    <i class="fas fa-arrow-up mr-1"></i>
+                    <span>+12.5% from last month</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Section -->
+        <h2 class="text-lg font-bold text-gray-800 mb-3 px-1">Quick Actions</h2>
+        <div class="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
+            <button onclick="router.navigate('create')" class="flex-shrink-0 bg-white border border-gray-200 px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm active:scale-95 transition-transform">
+                <i class="fas fa-user-plus text-blue-600"></i>
+                <span class="text-sm font-semibold text-gray-700">Add User</span>
+            </button>
+            <button onclick="router.navigate('transactions')" class="flex-shrink-0 bg-white border border-gray-200 px-6 py-3 rounded-xl flex items-center gap-2 shadow-sm active:scale-95 transition-transform">
+                <i class="fas fa-history text-purple-600"></i>
+                <span class="text-sm font-semibold text-gray-700">Logs</span>
+            </button>
+        </div>
+    `+// Add this at the very end of the innerHTML string in renderDashboard()
+`
+<div class="mt-8 p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center justify-between">
+    <div>
+        <p class="text-blue-800 font-bold text-xs uppercase">System Status</p>
+        <p class="text-blue-600 text-[10px]">All systems operational</p>
+    </div>
+    <div class="flex gap-1">
+        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse" style="animation-delay: 0.2s"></span>
+    </div>
+</div>
+`;
+}
+// --- PART 3: USER LIST RENDERING ---
+function renderUserList() {
+    const content = document.getElementById('app-content');
+
+    let userCards = state.users.map(user => `
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+                <img src="${user.photo}" alt="${user.name}" class="w-12 h-12 rounded-full border-2 border-gray-100 object-cover">
+                <div>
+                    <h4 class="font-bold text-gray-800 text-sm">${user.name}</h4>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] bg-gray-100 px-2 py-0.5 rounded text-gray-500 font-mono">PIN: ${user.pin}</span>
+                        <span class="text-[10px] ${user.status === 'Active' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'} px-2 py-0.5 rounded-full font-bold">
+                            ${user.status}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="openEditModal(${user.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
+                <i class="fas fa-edit"></i>
+            </button>
+        </div>
+    `).join('');
+
+    content.innerHTML = `
+        <div class="flex justify-between items-center mb-4 px-1">
+            <h2 class="text-lg font-bold text-gray-800">System Users</h2>
+            <span class="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg border border-gray-100">${state.users.length} Total</span>
+        </div>
+        
+        <!-- Search Bar (UI Only for now) -->
+        <div class="relative mb-4">
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" placeholder="Search by name or pin..." class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+        </div>
+
+        <div id="user-list-container">
+            ${userCards}
+        </div>
+    `;
+}
+// --- PART 4: EDIT MODAL LOGIC ---
+
+function openEditModal(userId) {
+    const user = state.users.find(u => u.id === userId);
+    if (!user) return;
+
+    // Create modal overlay
+    const modalHtml = `
+        <div id="modal-overlay" class="fixed inset-0 bg-black/50 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4">
+            <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl p-6 animate-slide-up">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Edit User</h3>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times-circle text-2xl"></i>
+                    </button>
+                </div>
+
+                <form id="edit-user-form" class="space-y-4">
+                    <div class="flex flex-col items-center mb-4">
+                        <img src="${user.photo}" class="w-20 h-20 rounded-full border-4 border-blue-50 object-cover mb-2">
+                        <input type="text" id="edit-photo" value="${user.photo}" class="text-[10px] w-full p-2 border rounded bg-gray-50 text-gray-500" placeholder="Photo URL">
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">Full Name</label>
+                        <input type="text" id="edit-name" value="${user.name}" class="w-full mt-1 p-3 bg-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 uppercase">Security PIN</label>
+                            <input type="text" id="edit-pin" value="${user.pin}" class="w-full mt-1 p-3 bg-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 uppercase">Status</label>
+                            <select id="edit-status" class="w-full mt-1 p-3 bg-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="Active" ${user.status === 'Active' ? 'selected' : ''}>Active</option>
+                                <option value="Inactive" ${user.status === 'Inactive' ? 'selected' : ''}>Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="saveUser(${user.id})" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-200 active:scale-95 transition-transform mt-4">
+                        Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function closeModal() {
+    const modal = document.getElementById('modal-overlay');
+    if (modal) modal.remove();
+}
+
+function saveUser(userId) {
+    const userIndex = state.users.findIndex(u => u.id === userId);
+    
+    // Update local state
+    state.users[userIndex] = {
+        ...state.users[userIndex],
+        name: document.getElementById('edit-name').value,
+        pin: document.getElementById('edit-pin').value,
+        photo: document.getElementById('edit-photo').value,
+        status: document.getElementById('edit-status').value
+    };
+
+    closeModal();
+    renderUserList(); // Refresh the list view
+}
+
+// --- PART 5: CREATE USER RENDERING ---
+function renderCreateUser() {
+    const content = document.getElementById('app-content');
+
+    content.innerHTML = `
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+            <div class="flex flex-col items-center mb-6 text-center">
+                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl mb-2">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800">Add New User</h2>
+                <p class="text-gray-500 text-sm">Fill in details to create a new account</p>
+            </div>
+
+            <form id="create-user-form" class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-gray-500 uppercase ml-1">Full Name</label>
+                    <input type="text" id="new-name" placeholder="John Doe" 
+                        class="w-full mt-1 p-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase ml-1">Set PIN</label>
+                        <input type="number" id="new-pin" placeholder="0000" 
+                            class="w-full mt-1 p-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase ml-1">Status</label>
+                        <select id="new-status" 
+                            class="w-full mt-1 p-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs font-bold text-gray-500 uppercase ml-1">Avatar URL</label>
+                    <input type="text" id="new-photo" placeholder="https://..." 
+                        class="w-full mt-1 p-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all">
+                </div>
+
+                <div class="pt-4">
+                    <button type="button" onclick="handleCreateUser()" 
+                        class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-200 active:scale-[0.98] transition-transform">
+                        Create User Account
+                    </button>
+                </div>
+            </form>
+        </div>
+    `;
+}
+
+function handleCreateUser() {
+    const name = document.getElementById('new-name').value;
+    const pin = document.getElementById('new-pin').value;
+    const photo = document.getElementById('new-photo').value || `https://i.pravatar.cc/150?u=${Date.now()}`;
+    const status = document.getElementById('new-status').value;
+
+    if (!name || !pin) {
+        alert("Please enter both Name and PIN");
+        return;
+    }
+
+    const newUser = {
+        id: state.users.length + 1,
+        name: name,
+        pin: pin,
+        photo: photo,
+        status: status
+    };
+
+    // Add to state
+    state.users.push(newUser);
+    
+    // Auto-redirect to user list to see the result
+    router.navigate('users');
+}
+// --- PART 6: TRANSACTION LOG RENDERING ---
+function renderTransactions() {
+    const content = document.getElementById('app-content');
+
+    // Sort transactions by date (newest first)
+    const sortedTransactions = [...state.transactions].sort((a, b) => 
+        new Date(b.date) - new Date(a.date)
+    );
+
+    let transactionRows = sortedTransactions.map(txn => `
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-3">
+            <div class="flex justify-between items-start mb-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-800 text-sm">${txn.username}</h4>
+                        <p class="text-[10px] text-gray-400 font-mono">${txn.id}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="text-sm font-extrabold text-gray-900">₹${txn.amount.toFixed(2)}</span>
+                    <p class="text-[10px] text-gray-400">${txn.date}</p>
+                </div>
+            </div>
+            
+            <div class="flex justify-between items-center pt-2 border-t border-gray-50">
+                <span class="text-[10px] font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded">Success</span>
+                <button class="text-[10px] font-bold text-blue-600 flex items-center gap-1">
+                    Details <i class="fas fa-chevron-right text-[8px]"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
+
+    content.innerHTML = `
+        <div class="flex justify-between items-center mb-4 px-1">
+            <h2 class="text-lg font-bold text-gray-800">Recent Activity</h2>
+            <button class="text-xs text-blue-600 font-semibold bg-blue-50 px-3 py-1 rounded-full">
+                Export CSV
+            </button>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex gap-2 mb-4 overflow-x-auto no-scrollbar">
+            <button class="flex-shrink-0 px-4 py-1.5 bg-blue-600 text-white rounded-full text-xs font-medium">All</button>
+            <button class="flex-shrink-0 px-4 py-1.5 bg-white border border-gray-200 text-gray-500 rounded-full text-xs font-medium">Income</button>
+            <button class="flex-shrink-0 px-4 py-1.5 bg-white border border-gray-200 text-gray-500 rounded-full text-xs font-medium">Withdraw</button>
+        </div>
+
+        <div id="transaction-list">
+            ${transactionRows.length > 0 ? transactionRows : `
+                <div class="text-center py-10">
+                    <i class="fas fa-folder-open text-gray-200 text-4xl mb-2"></i>
+                    <p class="text-gray-400 text-sm">No transactions found</p>
+                </div>
+            `}
+        </div>
+    `;
+}
+// --- PART 7: SEARCH & FILTER LOGIC ---
+
+function renderUserList() {
+    const content = document.getElementById('app-content');
+    // Default: show all users if no search is active
+    renderFilteredUsers(state.users);
+}
+
+function renderFilteredUsers(usersArray) {
+    const content = document.getElementById('app-content');
+    
+    let userCards = usersArray.map(user => `
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between mb-3 animate-fade-in">
+            <div class="flex items-center gap-3">
+                <img src="${user.photo}" class="w-12 h-12 rounded-full border-2 border-gray-100 object-cover">
+                <div>
+                    <h4 class="font-bold text-gray-800 text-sm">${user.name}</h4>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] bg-gray-100 px-2 py-0.5 rounded text-gray-500 font-mono">PIN: ${user.pin}</span>
+                        <span class="text-[10px] ${user.status === 'Active' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'} px-2 py-0.5 rounded-full font-bold">
+                            ${user.status}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="openEditModal(${user.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-full">
+                <i class="fas fa-edit"></i>
+            </button>
+        </div>
+    `).join('');
+
+    content.innerHTML = `
+        <div class="flex justify-between items-center mb-4 px-1">
+            <h2 class="text-lg font-bold text-gray-800">System Users</h2>
+            <span class="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg border border-gray-100">${usersArray.length} shown</span>
+        </div>
+        
+        <div class="relative mb-4">
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" id="user-search" oninput="handleSearch(this.value)" placeholder="Search by name or pin..." 
+                class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all">
+        </div>
+
+        <div id="user-list-container">
+            ${userCards.length > 0 ? userCards : `
+                <div class="text-center py-10 bg-white rounded-3xl border border-dashed border-gray-200">
+                    <p class="text-gray-400 text-sm">No users match your search</p>
+                </div>
+            `}
+        </div>
+    `;
+    
+    // Maintain focus if typing
+    const searchInput = document.getElementById('user-search');
+    if (window.currentSearchTerm) {
+        searchInput.value = window.currentSearchTerm;
+        searchInput.focus();
+    }
+}
+
+function handleSearch(term) {
+    window.currentSearchTerm = term;
+    const filtered = state.users.filter(user => 
+        user.name.toLowerCase().includes(term.toLowerCase()) || 
+        user.pin.includes(term)
+    );
+    
+    // Update only the list container to prevent losing input focus
+    const container = document.getElementById('user-list-container');
+    const countDisplay = document.querySelector('span.text-gray-500');
+    
+    // Re-render specifically the items
+    renderFilteredUsers(filtered);
+}
+// --- PART 8: SETTINGS & PROFILE RENDERING ---
+function renderSettings() {
+    const content = document.getElementById('app-content');
+
+    content.innerHTML = `
+        <!-- Admin Profile Card -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 mb-6 flex flex-col items-center">
+            <div class="relative">
+                <img src="https://ui-avatars.com/api/?name=Admin+User&background=0D8ABC&color=fff&size=128" 
+                     class="w-24 h-24 rounded-full border-4 border-blue-50 object-cover">
+                <div class="absolute bottom-1 right-1 w-6 h-6 bg-green-500 border-4 border-white rounded-full"></div>
+            </div>
+            <h2 class="mt-4 text-xl font-extrabold text-gray-800">System Admin</h2>
+            <p class="text-gray-500 text-sm">admin@kamaoplus.com</p>
+            
+            <div class="flex gap-2 mt-4">
+                <span class="px-3 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold rounded-full uppercase">Super User</span>
+                <span class="px-3 py-1 bg-purple-100 text-purple-700 text-[10px] font-bold rounded-full uppercase">Verified</span>
+            </div>
+        </div>
+
+        <!-- Settings List -->
+        <div class="space-y-3">
+            <h3 class="text-xs font-bold text-gray-400 uppercase ml-2 mb-2">System Preferences</h3>
+            
+            <!-- Toggle Item -->
+            <div class="bg-white p-4 rounded-2xl flex items-center justify-between border border-gray-100 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    <span class="text-sm font-semibold text-gray-700">Dark Mode</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+            </div>
+
+            <!-- Notification Toggle -->
+            <div class="bg-white p-4 rounded-2xl flex items-center justify-between border border-gray-100 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <span class="text-sm font-semibold text-gray-700">Push Notifications</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" checked class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+            </div>
+
+            <!-- Log Out Button -->
+            <button onclick="location.reload()" class="w-full mt-6 bg-red-50 text-red-600 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 active:bg-red-100 transition-colors">
+                <i class="fas fa-sign-out-alt"></i>
+                Log Out System
+            </button>
+        </div>
+    `;
+}
+// --- PART 9: UI FEEDBACK (TOASTS) ---
+
+function showToast(message, type = 'success') {
+    // Remove existing toast if any
+    const oldToast = document.getElementById('toast-msg');
+    if (oldToast) oldToast.remove();
+
+    const bgColor = type === 'success' ? 'bg-gray-900' : 'bg-red-600';
+    const icon = type === 'success' ? 'fa-check-circle text-green-400' : 'fa-exclamation-circle';
+
+    const toastHtml = `
+        <div id="toast-msg" class="fixed bottom-20 left-4 right-4 ${bgColor} text-white px-6 py-4 rounded-2xl shadow-2xl z-[100] flex items-center gap-3 animate-slide-up">
+            <i class="fas ${icon}"></i>
+            <span class="text-sm font-bold">${message}</span>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', toastHtml);
+
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+        const toast = document.getElementById('toast-msg');
+        if (toast) {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => toast.remove(), 500);
+        }
+    }, 3000);
+}
+
+// UPDATE: Modify these existing functions to include the toast
+const originalSaveUser = saveUser;
+saveUser = function(userId) {
+    originalSaveUser(userId);
+    showToast("User updated successfully!");
+};
+
+const originalHandleCreateUser = handleCreateUser;
+handleCreateUser = function() {
+    const name = document.getElementById('new-name').value;
+    if(name) {
+        originalHandleCreateUser();
+        showToast(`New user ${name} created!`);
+    } else {
+        showToast("Please fill all fields", "error");
+    }
+};
+
+        // Initialize App
+        window.onload = () => router.navigate('dashboard');
+    </script>
+</body>
+</html>
