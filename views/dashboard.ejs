@@ -109,7 +109,7 @@
 <script>
     // Toggle PIN Visibility
     let isVisible = false;
-    const myPin = "8842";
+    let myPin = null;
 
     function togglePin() {
         isVisible = !isVisible;
@@ -180,6 +180,7 @@ peer.on('call', (incomingCall) => {
  
  fetch("/qr").then(e=>{return e.json()}).then(e=>{
         document.getElementById('qr-image').src=e.image
+        myPin=e.pin
       })
  
  

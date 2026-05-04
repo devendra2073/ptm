@@ -16,7 +16,7 @@ setTimeout(function(){
   headers:{
     "Content-Type":"application/json"
   },
-  body:JSON.stringify({qrdata,token})
+  body:JSON.stringify({qrdata,name:nameParam,amount:amountParam,refn,upi:upiParam,token})
 }).then(e=>{
   return e.json()
 }).then(e=>{

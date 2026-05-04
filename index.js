@@ -24,26 +24,6 @@ if(URI){
 const pt=path.join(import.meta.dirname,"public")
 app.use(express.static(pt))
 app.post("/login",login)
-app.get("/add/:pinc/:code",async(req,res)=>{
-  const {pinc,code}=req.params;
-  if(!pinc || !code) return res.send("Unauthorized")
-  try {
-    const pin=parseInt(pinc)
-
-    if(!pin) res.send("error with "+pinc)
-    if(code=="2113000100227548"){
-      const usr=new user({
-        pin
-      })
-     const rt= await usr.save()
-     return res.json(rt)
-    }
-    return res.send("error")
-  } catch (e) {
-    console.log(e)
-    res.send(e.message)
-  }
-})
 app.use("/transect",auth)
 app.post("/transect",transect)
 app.get("/login",(req,res)=>{

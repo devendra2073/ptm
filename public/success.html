@@ -191,7 +191,7 @@ const appendToHistory = (name, upi, amount, ref, date) => {
     try {
         const storage = localStorage.getItem("history");
         let data = storage ? JSON.parse(storage) : [];
-        
+         
         // Add new transaction to the top of the array
         const newEntry = { name, upi, amount, ref, date };
         data = [newEntry, ...data];

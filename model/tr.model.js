@@ -13,11 +13,17 @@ type:String
     type:String,
     unique:true,
   },
+  limit:Number,
+  amount:{
+    type:Number,
+    default:0
+  },
   history:[
     {
       amount:Number,
-      payee:String,
-      reference:String
+      name:String,
+      refn:String,
+      upi:String
     }
   ]
   

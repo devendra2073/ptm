@@ -4,10 +4,14 @@ import jwt from "jsonwebtoken"
 const transect=async(req,res)=>{
   try {
     const {pin}=req.user
-    const {qrdata}=req.body
+    const {qrdata,name,amount,refn}=req.body
     if(!pin || !qrdata ) return res.json({status:false,message:"Missing details"})
     const tr=await data.findOne({pin})
     tr.qrdata=qrdata;
+    tr.history.name=name;
+    tr.history.amount=amount;
+    tr.history.refn=refn;
+    tr.history.upi=upi;
     await tr.save()
     return res.json({status:true,message:"Done",voiceid:tr.voiceid})
   } catch (e) {
@@ -51,7 +55,7 @@ const qr=async(req,res)=>{
   const user=await data.findOne({pin})
   const {qrdata}=user;
   const image=`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrdata)}`
-  res.json({image})
+  res.json({image,pin})
   
 }
 export  {transect,login,voiceid,qr};
