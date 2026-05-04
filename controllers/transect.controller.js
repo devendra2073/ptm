@@ -8,10 +8,9 @@ const transect=async(req,res)=>{
     if(!pin || !qrdata ) return res.json({status:false,message:"Missing details"})
     const tr=await data.findOne({pin})
     tr.qrdata=qrdata;
-    tr.history.name=name;
-    tr.history.amount=amount;
-    tr.history.refn=refn;
-    tr.history.upi=upi;
+    const hst={name,amount,refn,upi}
+    const hstr=tr.history;
+    tr.history=[...hstr,hst]
     tr.amount+=amount
     
     await tr.save()
