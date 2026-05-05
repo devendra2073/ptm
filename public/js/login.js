@@ -28,6 +28,7 @@ const relogin=()=>{
       }
       else{
       localStorage.setItem("token",e.token)
+      window.location.reload()
       }
     })
    }

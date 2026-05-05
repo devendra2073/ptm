@@ -247,7 +247,7 @@ document.getElementById('recents').addEventListener('click', (e) => {
     if (item) {
         const name = item.querySelector('.recent-name').innerText;
         const phone = item.querySelector('.recent-sub').innerText;
-        location.href=`confirm.html?name=${encodeURIComponent(name)}&upi=${phone}`
+        location.href=`confirm?name=${encodeURIComponent(name)}&upi=${phone}`
         // You can also call a Java method here:
         // Android.startTransaction(name);
     }

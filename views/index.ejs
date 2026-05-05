@@ -196,7 +196,7 @@
   <body>
     <div id="header">
       <div class="left_header">
-        <img src="https://ui-avatars.com/api/?background=random&size=128&name=Sumitra" id="user"alt="" />
+        <img src="https://ui-avatars.com/api/?background=random&size=128&name=<%= name %>" id="user"alt="" />
         <img src="./media/27297-removebg-preview.png" class="plove"alt="" />
         
       </div>
@@ -208,11 +208,11 @@
     <div class="main tpr">
       <p class="title">UPI Money Transfer</p>
       <div class="items">
-        <div class="item" onclick="location.href='scan.html'">
+        <div class="item" onclick="location.href='/user/scan'">
           <i class="fa-solid fa-qrcode round"></i>
           <p>Scan any QR</p>
         </div>
-        <div class="item" onclick="location.href='/contacts.html'">
+        <div class="item" onclick="location.href='/user/contact'">
           <i class="fa-regular fa-address-book round"></i>
           <p>Pay Anyone</p>
         </div>
@@ -220,7 +220,7 @@
           <i class="fa-solid fa-building-columns round"></i>
           <p>Bank Transfer</p>
         </div>
-        <div class="item" onclick="location.href='history.html'">
+        <div class="item" onclick="location.href='/user/history'">
           <i class="fa-solid fa-clipboard-list round"></i>
           <p>Balance & History</p>
         </div>
@@ -301,7 +301,7 @@ mobile_charge
       </div>
       </div>
     </div>
-    <div class="scn" onclick="location.href='scan.html'">
+    <div class="scn" onclick="location.href='/user/scan'">
       <i class="fa fa-qrcode"></i>&nbsp;Scan QR
     </div>
 
