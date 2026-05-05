@@ -24,6 +24,9 @@ if(URI){
 }
 const pt=path.join(import.meta.dirname,"public")
 app.use(express.static(pt))
+app.get("/",(req,res)=>{
+  res.redirect("/user")
+})
 app.post("/login",login)
 app.use("/transect",auth)
 app.post("/transect",transect)
