@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 - Access Denied</title>
+    <style>
+      /* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #0b0e14;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.container {
+    text-align: center;
+    padding: 2rem;
+}
+
+/* 403 Text Styling */
+.error-code {
+    font-size: 8rem;
+    font-weight: 900;
+    letter-spacing: 5px;
+    margin-bottom: 0;
+    color: #ff4757;
+    text-shadow: 0 0 20px rgba(255, 71, 87, 0.4);
+    animation: pulse 2s infinite;
+}
+
+.message {
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    color: #ced4da;
+}
+
+.description {
+    color: #6c757d;
+    margin-bottom: 2rem;
+}
+
+/* Button Styling */
+.btn {
+    display: inline-block;
+    padding: 0.8rem 2rem;
+    background-color: transparent;
+    border: 2px solid #ff4757;
+    color: #ff4757;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.btn:hover {
+    background-color: #ff4757;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(255, 71, 87, 0.5);
+}
+
+/* Subtle Animation */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="error-code">403</h1>
+        <p class="message">Unauthorized Access</p>
+        <p class="description">
+            Sorry, you don't have permission to view this page. 
+           
+        </p>
+        
+    <script >
+
+
+// Log the unauthorized attempt for debugging (Optional)
+console.warn("Security Alert: Unauthorized access attempt detected.");
+    </script>
+    <script src="/js/login.js"></script>
+</body>
+</html>

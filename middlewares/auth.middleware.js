@@ -3,11 +3,11 @@ import user from "../model/tr.model.js"
 const auth=async(req,res,next)=>{
   try {
     const {session}=req.cookies || req.body
-    if(!session) return res.send(session)
+    if(!session) return res.render("403")
     const token=await jwt.verify(session,process.env.JWT)
-    if(!token) return res.send(token+" token")
+    if(!token) return res.render("403")
     const usr=await user.findOne({pin:token.pin})
-    if(!usr) return res.send(usr+ "usr")
+    if(!usr) return res.render("403")
     req.user=usr
     return next()
     

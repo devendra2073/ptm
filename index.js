@@ -7,6 +7,7 @@ import user from "./model/tr.model.js"
 import mongoose from "mongoose"
 import auth from "./middlewares/auth.middleware.js"
 import cookieParser from "cookie-parser"
+import userRouter from "./routes/userRouter.js"
 import {transect,login,voiceid,qr} from "./controllers/transect.controller.js"
 dotenv.config()
 const PORT=process.env.PORT||8000
@@ -29,6 +30,7 @@ app.post("/transect",transect)
 app.get("/login",(req,res)=>{
   res.render("login")
 })
+app.use("/user",userRouter)
 app.use("/device",auth)
 app.get("/device",(req,res)=>{
   res.render("dashboard")
