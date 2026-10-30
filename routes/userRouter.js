@@ -18,4 +18,11 @@ router.get("/history",(req,res)=>{
     res.render("history",{history})
 })
 router.get("/confirm",confirm);
+router.get("/upipin",(req,res)=>{
+res.render("upipin");
+})
+router.get("/success",(req,res)=>{
+res.render("success");
+})
+
 export default router
