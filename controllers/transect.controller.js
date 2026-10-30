@@ -50,6 +50,13 @@ const voiceid=async(req,res)=>{
   await user.save()
   res.json({status:true,message:"Voice id registered"})
 }
+const confirm=async(req,res)=>{
+const {name,upi}=req.params;
+  if(!name || !upi) return res.render("403")
+  return res.render("confirm",{name,upi});
+
+
+}
 const qr=async(req,res)=>{
   const {pin}=req.user
   if(!pin) return res.json({status:false})
