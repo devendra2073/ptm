@@ -1,4 +1,5 @@
 import express from "express";
+import {confirm} from "../controllers/transect.controller.js"
 import auth from "../middlewares/auth.middleware.js";
 const router=express.Router()
 router.use(auth)   
@@ -16,4 +17,5 @@ router.get("/history",(req,res)=>{
     const {history}=req.user
     res.render("history",{history})
 })
+router.get("/confirm",confirm);
 export default router
