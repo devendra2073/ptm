@@ -13,7 +13,7 @@ const relogin=()=>{
       headers:{
         "Content-Type":"application/json"
       },
-      body:JSON.stringify({pin,id:Android.getDeviceId()})
+      body:JSON.stringify({pin,id:"74858385945"})
     }).then(e=>{
       try{
       return e.json()
