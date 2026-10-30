@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Paytm Send Money UI</title>
@@ -12,6 +11,8 @@ body { background-color: #f5f7f9; color: #333; }
 
 /* 1. Header & Search Area */
 .header { background: white; padding: 15px; border-bottom: 1px solid #eee; }
+.top-nav { display: flex; align-items: center; }
+.back-arrow { font-size: 20px; cursor: pointer; margin-right: 15px; }
 .main-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
 .sub-title { font-size: 12px; color: #777; margin-bottom: 15px; }
 .logos { font-weight: bold; color: #00baf2; margin-left: 5px; }
@@ -48,9 +49,9 @@ body { background-color: #f5f7f9; color: #333; }
 /* 4. Suggestions (Horizontal Scroll) */
 .suggestions-slider {
     display: flex; overflow-x: auto; padding: 10px 15px; gap: 20px;
-    background: white; scrollbar-width: none; /* Hide scrollbar for Firefox */
+    background: white; scrollbar-width: none;
 }
-.suggestions-slider::-webkit-scrollbar { display: none; } /* Hide scrollbar for Chrome */
+.suggestions-slider::-webkit-scrollbar { display: none; }
 
 .suggest-item { text-align: center; min-width: 65px; }
 .avatar-circle {
@@ -63,24 +64,26 @@ body { background-color: #f5f7f9; color: #333; }
 /* 5. Recents (Vertical List) */
 .recents-list { background: white; }
 .recent-item {
-    display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f0f0f0;
+    display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer;
 }
 .recent-info { margin-left: 15px; flex: 1; }
 .recent-name { font-size: 15px; font-weight: 500; }
 .recent-sub { font-size: 12px; color: #888; margin-top: 2px; }
 
-/* Avatar Colors from Video */
-.col-1 { background: #ffadad; } .col-2 { background: #ffd6a5; }
-.col-3 { background: #fdffb6; color: #888; } .col-4 { background: #caffbf; color: #444; }
-.col-5 { background: #9bf6ff; color: #444; } .col-6 { background: #a0c4ff; }
-
+/* Avatar Colors */
+.col-1 { background: #ffadad; color: #444; } 
+.col-2 { background: #ffd6a5; color: #444; }
+.col-3 { background: #fdffb6; color: #444; } 
+.col-4 { background: #caffbf; color: #444; }
+.col-5 { background: #9bf6ff; color: #444; } 
+.col-6 { background: #a0c4ff; color: #444; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <div class="top-nav">
-            <span class="back-arrow"onclick="history.back()">&#8592;</span>
+            <span class="back-arrow" onclick="history.back()">&#8592;</span>
             <div class="title-container">
                 <h1 class="main-title">Send Money</h1>
                 <p class="sub-title">Pay to any UPI app <span class="logos">Paytm | GPay | BHIM</span></p>
@@ -106,83 +109,96 @@ body { background-color: #f5f7f9; color: #333; }
     </div>
 
     <div class="main-content">
-        <div class="section-header">Suggestions</div>
-        <div class="suggestions-slider" id="suggestions">
-            </div>
+        <div class="section-header" id="sectionHeader">Suggestions</div>
+        <div class="suggestions-slider" id="suggestions"></div>
 
         <div class="section-header">Recents</div>
-        <div class="recents-list" id="recents">
-            </div>
+        <div class="recents-list" id="recents"></div>
     </div>
-<script type="text/javascript" charset="utf-8">
-  // 1. Mock Data (This mimics the JSON your Android Java code will eventually send)
-const mockData = JSON.parse(Android.getAndroidContacts())
 
-// 2. Initialize the UI
-document.addEventListener("DOMContentLoaded", () => {
-    renderUI(mockData.contacts);
-});
+<script type="text/javascript">
+let contactData = [];
+
+function init() {
+    // Check if the "Android" bridge exists and use readContacts()
+    if (typeof Android !== "undefined" && Android.readContacts) {
+        try {
+            const rawData = Android.readContacts();
+            contactData = JSON.parse(rawData);
+        } catch (e) {
+            console.error("Failed to parse Android contacts", e);
+        }
+    } else {
+        // Fallback to Mock Data for testing in a normal browser
+        contactData = [
+            {"name": "Aditya Singh", "phone": "9876543210"},
+            {"name": "Bhavna Sharma", "phone": "8765432109"},
+            {"name": "Chirag Gupta", "phone": "7654321098"}
+        ];
+    }
+    renderUI(contactData);
+}
 
 function renderUI(contacts) {
     const suggestionsDiv = document.getElementById('suggestions');
     const recentsDiv = document.getElementById('recents');
     
-    // Clear existing content
     suggestionsDiv.innerHTML = '';
     recentsDiv.innerHTML = '';
 
-    contacts.forEach((contact, index) => {
-        const initials = contact.name.charAt(0);
-        const colorClass = `col-${(index % 6) + 1}`; // Cycles through col-1 to col-6
+    if (!contacts || contacts.length === 0) {
+        recentsDiv.innerHTML = `<div style="padding:20px; text-align:center; color:#888;">No contacts available</div>`;
+        return;
+    }
 
-        // Create Suggestion Circle (Horizontal Scroll)
-        if (index < 6) { // Only top 6 in suggestions
+    contacts.forEach((contact, index) => {
+        const initials = contact.name ? contact.name.charAt(0).toUpperCase() : '?';
+        const colorClass = `col-${(index % 6) + 1}`;
+
+        // Create Suggestion Circle (Top 6)
+        if (index < 6) {
             const suggestHTML = `
-                <div class="suggest-item">
+                <div class="suggest-item" onclick="selectContact('${contact.name}', '${contact.phone}')">
                     <div class="avatar-circle ${colorClass}">${initials}</div>
                     <div class="suggest-name">${contact.name.split(' ')[0]}</div>
                 </div>`;
             suggestionsDiv.innerHTML += suggestHTML;
         }
 
-        // Create Recent List Item (Vertical)
+        // Create Recent List Item
         const recentHTML = `
-            <div class="recent-item">
+            <div class="recent-item" onclick="selectContact('${contact.name}', '${contact.phone}')">
                 <div class="avatar-circle ${colorClass}" style="width:40px; height:40px; font-size:14px;">${initials}</div>
                 <div class="recent-info">
-                    <div class="recent-name">${contact.name} ${contact.isVerified ? '<span style="color:#00baf2; font-size:12px;">✔️</span>' : ''}</div>
+                    <div class="recent-name">${contact.name}</div>
                     <div class="recent-sub">${contact.phone}</div>
                 </div>
             </div>`;
         recentsDiv.innerHTML += recentHTML;
     });
 }
-// Add this to your script.js file
 
+// Search Functionality
 const searchInput = document.getElementById('contactSearch');
 
-// 3. Search Listener
 searchInput.addEventListener('keyup', (e) => {
     const searchTerm = e.target.value.toLowerCase();
     
-    // Filter the mockData array based on name or phone number
-    const filteredContacts = mockData.contacts.filter(contact => {
+    const filteredContacts = contactData.filter(contact => {
         return (
             contact.name.toLowerCase().includes(searchTerm) || 
             contact.phone.includes(searchTerm)
         );
     });
 
-    // Re-render the UI with only the filtered results
     updateSearchUI(filteredContacts, searchTerm);
 });
 
 function updateSearchUI(filtered, term) {
     const recentsDiv = document.getElementById('recents');
     const suggestionsSection = document.querySelector('.suggestions-slider');
-    const suggestionHeader = document.querySelector('.section-header');
+    const suggestionHeader = document.getElementById('sectionHeader');
 
-    // Hide suggestions when searching (matches many payment app behaviors)
     if (term.length > 0) {
         suggestionsSection.style.display = 'none';
         suggestionHeader.innerText = "Search Results";
@@ -191,7 +207,6 @@ function updateSearchUI(filtered, term) {
         suggestionHeader.innerText = "Suggestions";
     }
 
-    // Clear and rebuild the list
     recentsDiv.innerHTML = '';
 
     if (filtered.length === 0) {
@@ -200,11 +215,11 @@ function updateSearchUI(filtered, term) {
     }
 
     filtered.forEach((contact, index) => {
-        const initials = contact.name.charAt(0);
+        const initials = contact.name ? contact.name.charAt(0).toUpperCase() : '?';
         const colorClass = `col-${(index % 6) + 1}`;
 
         const html = `
-            <div class="recent-item">
+            <div class="recent-item" onclick="selectContact('${contact.name}', '${contact.phone}')">
                 <div class="avatar-circle ${colorClass}" style="width:40px; height:40px; font-size:14px;">${initials}</div>
                 <div class="recent-info">
                     <div class="recent-name">${contact.name}</div>
@@ -214,45 +229,14 @@ function updateSearchUI(filtered, term) {
         recentsDiv.innerHTML += html;
     });
 }
-// 1. Data Source Logic
-let contactData = [];
 
-function init() {
-    // Check if the "Android" bridge exists (added via addJavascriptInterface)
-    if (typeof Android !== "undefined" && Android.getAndroidContacts) {
-        try {
-            const rawData = Android.getAndroidContacts();
-            const parsed = JSON.parse(rawData);
-            contactData = parsed.contacts;
-        } catch (e) {
-            console.error("Failed to parse Android contacts", e);
-        }
-    } else {
-        // Fallback to Mock Data for testing in browser
-        contactData = [
-            {"name": "Aditya Singh", "phone": "9876543210", "isVerified": true},
-            {"name": "Bhavna Sharma", "phone": "8765432109", "isVerified": false},
-            {"name": "Chirag Gupta", "phone": "7654321098", "isVerified": true}
-        ];
-    }
-    renderUI(contactData);
+// Contact Click Action
+function selectContact(name, phone) {
+    location.href = `confirm?name=${encodeURIComponent(name)}&upi=${phone}`;
 }
 
 // Initialize on load
 document.addEventListener("DOMContentLoaded", init);
-
-// 2. Item Click Logic (Add this so clicking a contact does something!)
-document.getElementById('recents').addEventListener('click', (e) => {
-    const item = e.target.closest('.recent-item');
-    if (item) {
-        const name = item.querySelector('.recent-name').innerText;
-        const phone = item.querySelector('.recent-sub').innerText;
-        location.href=`confirm?name=${encodeURIComponent(name)}&upi=${phone}`
-        // You can also call a Java method here:
-        // Android.startTransaction(name);
-    }
-});
-
 </script>
 </body>
 </html>
