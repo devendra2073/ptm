@@ -66,4 +66,4 @@ const qr=async(req,res)=>{
   res.json({image,pin})
   
 }
-export  {transect,login,voiceid,qr};
+export  {transect,login,voiceid,qr,confirm};
