@@ -51,7 +51,7 @@ const voiceid=async(req,res)=>{
   res.json({status:true,message:"Voice id registered"})
 }
 const confirm=async(req,res)=>{
-const {name,upi}=req.params;
+const {name,upi}=req.query;
   if(!name || !upi) return res.render("403")
   return res.render("confirm",{name,upi});
 
