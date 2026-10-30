@@ -186,6 +186,7 @@ try {
     const { number, message } = sendSms(upiParam, formattedAmount);
     Android.sendSms(number, message);
 } catch (e) {
+console.log(e)
     console.log("SMS Interface not found");
 }
 
