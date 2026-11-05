@@ -52,8 +52,11 @@ const voiceid=async(req,res)=>{
 }
 const confirm=async(req,res)=>{
 const {name,upi}=req.query;
+  let am=req.query?.am;
+  am=am?am:"0";
+  
   if(!name || !upi) return res.render("403")
-  return res.render("confirm",{name,upi});
+  return res.render("confirm",{name,upi,am});
 
 
 }
