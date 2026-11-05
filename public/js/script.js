@@ -81,7 +81,7 @@ function handleQRCode(data) {
         return;
     }
 
-    window.location.href = `confirm.html?name=${encodeURIComponent(name)}&am=${amount}&upi=${encodeURIComponent(upi)}`;
+    window.location.href = `/confirm?name=${encodeURIComponent(name)}&am=${amount}&upi=${encodeURIComponent(upi)}`;
 }
 
 // --- NEW: Torch Control ---
